@@ -1,0 +1,459 @@
+port: 7890
+socks-port: 7891
+allow-lan: true
+mode: rule
+log-level: info
+external-controller: :9090
+
+dns:
+  enable: true
+  listen: 127.0.0.1:1053
+  cache-algorithm: arc
+
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
+
+  ipv6: true
+  prefer-h3: false
+
+  respect-rules: true
+  use-hosts: false
+  use-system-hosts: false
+
+  fake-ip-filter:
+    - "+.lan"
+    - "+.local"
+    - "+.arpa"
+    - "localhost.ptlogin2.qq.com"
+    - "localhost.work.weixin.qq.com"
+    - "+.msftncsi.com"
+    - "+.msftconnecttest.com"
+    - "time.*.com"
+    - "ntp.*.com"
+    - "geosite:private"
+    - "geosite:cn"
+
+  default-nameserver:
+    - 119.29.29.29
+    - 223.5.5.5
+
+  nameserver:
+    - https://1.12.12.12/dns-query
+    - https://223.5.5.5/dns-query
+
+  proxy-server-nameserver:
+    - https://1.12.12.12/dns-query
+    - https://223.5.5.5/dns-query
+
+  nameserver-policy:
+    "geosite:private":
+      - system
+
+    "geosite:cn":
+      - https://1.12.12.12/dns-query
+      - https://223.5.5.5/dns-query
+
+    "geosite:geolocation-!cn":
+      - tls://dns.google
+      - tls://cloudflare-dns.com
+
+proxies:
+  - 节点
+  
+proxy-groups:
+  - name: 节点选择
+    type: select
+    include-all: true
+    proxies:
+      - 最优延迟
+      - 故障转移
+      - 负载轮询
+      - DIRECT
+      - 日本
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Proxy.png
+
+  - name: 最优延迟
+    type: url-test
+    include-all: true
+    url: https://www.gstatic.com/generate_204
+    interval: 150
+    tolerance: 50
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Speedtest.png
+
+  - name: 故障转移
+    type: fallback
+    proxies:
+      - 日本
+    url: https://www.gstatic.com/generate_204
+    interval: 150
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Bypass.png
+
+  - name: 负载轮询
+    type: load-balance
+    proxies:
+      - 日本
+    url: https://www.google.com/generate_204
+    interval: 150
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Auto.png 
+
+  - name: 电报新加坡
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Telegram.png
+
+  - name: 电报美国
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Telegram.png
+
+  - name: 电报荷兰
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Telegram.png
+    
+  - name: 电报兜底
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Telegram.png
+    
+  - name: Nodeseek
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://cdn.jsdelivr.net/gh/Vbaethon/HOMOMIX@main/Icon/Color/Panda.png
+
+  - name: 探针
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Want_Want.png
+    
+  - name: 人工智能
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/ChatGPT.png
+
+  - name: 国外媒体
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Netflix.png
+
+  - name: 巴哈姆特
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Bahamut.png
+
+  - name: 油管视频
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/YouTube.png
+
+  - name: emby
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/walkxcode/dashboard-icons/png/emby.png
+
+  - name: 谷歌服务
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Google.png
+
+  - name: 微软服务
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Microsoft.png
+
+  - name: 苹果服务
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Apple.png
+
+  - name: 漏网之鱼
+    type: select
+    include-all: true
+    proxies: [节点选择, DIRECT, 最优延迟]
+    icon: https://quantil.jsdelivr.net/gh/Koolson/Qure/IconSet/Color/Final.png
+
+rule-providers:
+  AWAvenue-Ads:
+    behavior: domain
+    type: http
+    url: "https://raw.githubusercontent.com/TG-Twilight/AWAvenue-Ads-Rule/refs/heads/main/Filters/AWAvenue-Ads-Rule-Clash-Classical.yaml"
+    interval: 86400
+    path: ./rule_provider/AWAvenue-Ads.yaml
+
+  jsproxy:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/qklg/pic@master/ruleset/jsproxy.yaml"
+    interval: 86400
+    path: ./ACL4SSR/jsproxy.yaml
+
+  LocalAreaNetwork:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/LocalAreaNetwork.yaml"
+    interval: 86400
+    path: ./ACL4SSR/LocalAreaNetwork.yaml
+
+  UnBan:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/UnBan.yaml"
+    interval: 86400
+    path: ./ACL4SSR/UnBan.yaml
+
+  ChinaIp:
+    behavior: ipcidr
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/ChinaIp.yaml"
+    interval: 86400
+    path: ./ACL4SSR/ChinaIp.yaml
+
+  ChinaDomain:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/ChinaDomain.yaml"
+    interval: 86400
+    path: ./ACL4SSR/ChinaDomain.yaml
+
+  ChinaCompanyIp:
+    behavior: ipcidr
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/ChinaCompanyIp.yaml"
+    interval: 86400
+    path: ./ACL4SSR/ChinaCompanyIp.yaml
+
+  SteamRegionCheck:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/qklg/pic@master/ruleset/SteamRegionCheck.yaml"
+    interval: 86400
+    path: ./ACL4SSR/SteamRegionCheck.yaml
+
+  Hetzner:
+    behavior: domain
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@meta/geo/geosite/hetzner.yaml"
+    interval: 86400
+    path: ./ACL4SSR/Hetzner.yaml
+
+  Google:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/Ruleset/Google.yaml"
+    interval: 86400
+    path: ./ACL4SSR/Google.yaml
+
+  GoogleCN:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/Ruleset/GoogleCN.yaml"
+    interval: 86400
+    path: ./ACL4SSR/GoogleCN.yaml
+
+  GoogleFCM:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/Ruleset/GoogleFCM.yaml"
+    interval: 86400
+    path: ./ACL4SSR/GoogleFCM.yaml
+
+  YouTube:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/Ruleset/YouTube.yaml"
+    interval: 86400
+    path: ./ACL4SSR/YouTube.yaml
+
+  ProxyLite:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/ProxyLite.yaml"
+    interval: 86400
+    path: ./ACL4SSR/ProxyLite.yaml
+
+  AI:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/Ruleset/AI.yaml"
+    interval: 86400
+    path: ./ACL4SSR/AI.yaml
+
+  Bahamut:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/Ruleset/Bahamut.yaml"
+    interval: 86400
+    path: ./ACL4SSR/Bahamut.yaml
+
+  Microsoft:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/Ruleset/Microsoft.yaml"
+    interval: 86400
+    path: ./ACL4SSR/Microsoft.yaml
+
+  OneDrive:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/Ruleset/OneDrive.yaml"
+    interval: 86400
+    path: ./ACL4SSR/OneDrive.yaml
+
+  Apple:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/Ruleset/Apple.yaml"
+    interval: 86400
+    path: ./ACL4SSR/Apple.yaml
+
+  BanAD:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/BanAD.yaml"
+    interval: 86400
+    path: ./ACL4SSR/BanAD.yaml
+
+  BanProgramAD:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/BanProgramAD.yaml"
+    interval: 86400
+    path: ./ACL4SSR/BanProgramAD.yaml
+
+  BanEasyList:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/BanEasyList.yaml"
+    interval: 86400
+    path: ./ACL4SSR/BanEasyList.yaml
+
+  ProxyMedia:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/ACL4SSR/ACL4SSR@master/Clash/Providers/ProxyMedia.yaml"
+    interval: 86400
+    path: ./ACL4SSR/ProxyMedia.yaml
+
+  TelegramSG:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/xinchenmi/mihomo@main/TelegramSG.yaml"
+    interval: 86400
+    path: ./ACL4SSR/TelegramSG.yaml
+
+  TelegramUS:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/xinchenmi/mihomo@main/TelegramUS.yaml"
+    interval: 86400
+    path: ./ACL4SSR/TelegramUS.yaml
+
+  TelegramNL:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/xinchenmi/mihomo@main/TelegramNL.yaml"
+    interval: 86400
+    path: ./ACL4SSR/TelegramNL.yaml
+
+  TelegramALL:
+    behavior: classical
+    type: http
+    url: "https://quantil.jsdelivr.net/gh/xinchenmi/mihomo@main/TelegramALL.yaml"
+    interval: 86400
+    path: ./ACL4SSR/TelegramALL.yaml
+
+
+rules:
+# 按需增加，我这里是为了分流ns和手机上观看emby
+  - DOMAIN-SUFFIX,nodeseek.com,Nodeseek
+  - DOMAIN-SUFFIX,mjj.dog,探针
+  - DOMAIN,mjj.dog,探针
+  - PROCESS-NAME,com.mountains.hills,emby
+  - PROCESS-NAME,com.hush.yamby,emby
+
+# 先拦截广告（放前面更稳）
+  - RULE-SET,AWAvenue-Ads,REJECT
+  - RULE-SET,BanAD,REJECT
+  - RULE-SET,BanProgramAD,REJECT
+  - RULE-SET,BanEasyList,REJECT
+
+# 局域网 & 放行
+  - RULE-SET,LocalAreaNetwork,DIRECT
+  - RULE-SET,UnBan,DIRECT
+
+# 强制微信直连（Windows）
+  - PROCESS-NAME,WeChat.exe,DIRECT
+  - PROCESS-NAME,Weixin.exe,DIRECT
+
+# 可选：微信/QQ 相关域名也强制直连（更保险）
+  - DOMAIN-SUFFIX,wechat.com,DIRECT
+  - DOMAIN-SUFFIX,weixin.qq.com,DIRECT
+  - DOMAIN-SUFFIX,qq.com,DIRECT
+  - DOMAIN-SUFFIX,qpic.cn,DIRECT
+
+
+# 手动自定义分流
+  - RULE-SET,jsproxy,节点选择
+  - RULE-SET,OneDrive,节点选择
+  - RULE-SET,TelegramSG,电报新加坡
+  - RULE-SET,TelegramUS,电报美国
+  - RULE-SET,TelegramNL,电报荷兰
+  - RULE-SET,TelegramALL,电报兜底
+  - RULE-SET,Microsoft,微软服务
+  - RULE-SET,Apple,苹果服务
+
+# 国内直连
+  - RULE-SET,ChinaIp,DIRECT
+  - RULE-SET,ChinaDomain,DIRECT
+  - RULE-SET,ChinaCompanyIp,DIRECT
+  - RULE-SET,SteamRegionCheck,DIRECT
+  - RULE-SET,Hetzner,DIRECT
+
+# 视频/谷歌
+  - RULE-SET,YouTube,油管视频
+  - RULE-SET,Google,谷歌服务
+  - RULE-SET,GoogleCN,DIRECT    #修正:GoogleCN 走直连更符合其定位
+  - RULE-SET,GoogleFCM,谷歌服务
+
+# AI / 媒体 / 其他
+  - RULE-SET,AI,人工智能
+  - DOMAIN-SUFFIX,imgur.com,人工智能
+  - RULE-SET,Bahamut,巴哈姆特
+  - RULE-SET,ProxyMedia,国外媒体
+  - RULE-SET,ProxyLite,节点选择
+
+# 阻止 Adobe
+  - DOMAIN-SUFFIX,adobe.io,REJECT
+
+# 一些常用兜底（把原来写成 PROXY 的地方统一改为 节点选择，避免不存在的组）
+  - GEOSITE,private,DIRECT
+  - GEOIP,private,DIRECT,no-resolve
+  - GEOSITE,google,节点选择
+  - GEOSITE,geolocation-!cn,节点选择
+  - GEOSITE,CN,DIRECT
+  - GEOIP,CN,DIRECT
+
+# 绕过局域网地址
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,100.64.0.0/10,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
+
+# 最终兜底
+  - MATCH,漏网之鱼  
